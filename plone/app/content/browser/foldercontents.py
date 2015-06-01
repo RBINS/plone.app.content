@@ -180,7 +180,11 @@ class FolderContentsTable(object):
     def contentsMethod(self):
         context = aq_inner(self.context)
         if hasattr(context.__class__, 'queryCatalog'):
-            contentsMethod = context.queryCatalog
+            def query(contentFilter, *args, **kwargs):
+                kwargs.setdefault('b_size', None)
+                kwargs.setdefault('batch', False)
+                return context.queryCatalog(*args, **kwargs)
+            contentsMethod = query
         else:
             contentsMethod = context.getFolderContents
         return contentsMethod
